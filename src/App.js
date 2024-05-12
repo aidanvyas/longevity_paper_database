@@ -24,6 +24,7 @@ function App() {
       // Assuming the API or another function provides similar papers data
       setSimilarPapers(data.similarPapers); // Adjust as per actual data structure
       setLoading(false); // Set loading to false after data is fetched
+      console.log('Fetched papers data:', data); // Added logging to check the fetched data
     } catch (error) {
       console.error("Could not fetch papers: ", error);
       setLoading(false); // Set loading to false even if there is an error
