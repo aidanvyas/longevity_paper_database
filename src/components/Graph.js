@@ -6,7 +6,7 @@ const Graph = ({ papers }) => {
   const network = React.useRef(null);
 
   React.useEffect(() => {
-    if (container.current && !network.current) {
+    if (container.current && !network.current && papers.length > 0) { // Ensure papers data is not empty
       // Create an array with nodes
       const nodes = papers.map((paper, index) => ({
         id: index,
@@ -42,8 +42,13 @@ const Graph = ({ papers }) => {
     }
   }, [papers]); // Re-run effect if papers prop changes
 
+  // Conditional rendering to display the graph only if papers data is available
   return (
-    <div ref={container} style={{ height: '500px' }} />
+    papers.length > 0 ? (
+      <div ref={container} style={{ height: '500px' }} />
+    ) : (
+      <div>No data available for the graph.</div>
+    )
   );
 };
 
