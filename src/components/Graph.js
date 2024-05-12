@@ -23,6 +23,9 @@ const Graph = ({ papers }) => {
             const targetIndex = papers.findIndex((p) => p.title === reference.title);
             if (targetIndex !== -1) {
               edges.push({ from: index, to: targetIndex });
+            } else {
+              // Log for debugging: when a reference does not match any paper title
+              console.log(`Reference not found for title: ${reference.title}`);
             }
           });
         }
