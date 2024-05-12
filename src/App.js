@@ -9,22 +9,21 @@ import PaperDetail from './components/PaperDetail'; // Import the PaperDetail co
 
 function App() {
   const [papers, setPapers] = useState([]);
-  const [similarPapers, setSimilarPapers] = useState([]);
   const [loading, setLoading] = useState(true); // Added loading state
 
   // Function to fetch papers from the backend server
   const fetchPapers = async () => {
+    console.log('Starting fetchPapers function'); // Added for debugging
     try {
       const response = await fetch('https://longevity-research-website-bqrhp4y8.devinapps.com/fetch_papers'); // Updated the fetch URL to the exposed backend server
+      console.log('Fetch response received'); // Added for debugging
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Data received from fetch:', data); // Added for debugging
       setPapers(data);
-      // Assuming the API or another function provides similar papers data
-      setSimilarPapers(data.similarPapers); // Adjust as per actual data structure
       setLoading(false); // Set loading to false after data is fetched
-      console.log('Fetched papers data:', data); // Added logging to check the fetched data
     } catch (error) {
       console.error("Could not fetch papers: ", error);
       setLoading(false); // Set loading to false even if there is an error
@@ -34,7 +33,7 @@ function App() {
   // Fetch papers on component mount
   useEffect(() => {
     fetchPapers();
-  }, []);
+  }, []); // Removed papers dependency to avoid re-fetching on papers state update
 
   // Effect to log papers state after it's set
   useEffect(() => {
@@ -81,7 +80,7 @@ function App() {
           <Route path="/papers" element={<Papers papers={papers} />} />
           <Route path="/about" element={<About />} />
           <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} key={papers.length} />} /> {/* Conditional rendering based on loading state, added key prop to Graph */}
-          <Route path="/papers/:paperId" element={<PaperDetail paper={papers[0]} similarPapers={similarPapers} />} />
+          <Route path="/papers/:paperId" element={<PaperDetail paper={papers[0]} />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
