@@ -37,6 +37,8 @@ const Graph = ({ papers }) => {
       // Debugging: Log the nodes and edges to the console
       console.log('Nodes:', JSON.stringify(nodes, null, 2));
       console.log('Edges:', JSON.stringify(edges, null, 2));
+      // Additional debugging: Log the papers prop to ensure it contains the correct reference data
+      console.log('Papers prop:', JSON.stringify(papers, null, 2));
     }
   }, [papers]); // Re-run effect if papers prop changes
 
