@@ -6,6 +6,7 @@ const Graph = ({ papers }) => {
   const network = React.useRef(null);
 
   React.useEffect(() => {
+    console.log('Graph component papers prop at render:', papers); // Additional logging to check the papers prop at render time
     if (container.current && !network.current && papers.length > 0) { // Ensure papers data is not empty
       // Create an array with nodes
       const nodes = papers.map((paper, index) => ({
