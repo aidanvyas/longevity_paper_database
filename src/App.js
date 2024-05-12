@@ -10,6 +10,7 @@ import PaperDetail from './components/PaperDetail'; // Import the PaperDetail co
 function App() {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true); // Added loading state
+  const [fetchCount, setFetchCount] = useState(0); // State to track the number of fetches
 
   // Function to fetch papers from the backend server
   const fetchPapers = async () => {
@@ -24,6 +25,7 @@ function App() {
       console.log('Data received from fetch:', data); // Added for debugging
       setPapers(data);
       setLoading(false); // Set loading to false after data is fetched
+      setFetchCount(fetchCount + 1); // Increment fetch count
     } catch (error) {
       console.error("Could not fetch papers: ", error);
       setLoading(false); // Set loading to false even if there is an error
@@ -79,7 +81,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/papers" element={<Papers papers={papers} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} key={JSON.stringify(papers)} />} /> {/* Conditional rendering based on loading state, updated key prop to Graph */}
+          <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} fetchCount={fetchCount} key={JSON.stringify(papers)} />} /> {/* Conditional rendering based on loading state, updated key prop to Graph */}
           <Route path="/papers/:paperId" element={<PaperDetail paper={papers[0]} />} />
         </Routes>
       </BrowserRouter>

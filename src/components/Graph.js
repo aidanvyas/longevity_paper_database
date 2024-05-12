@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 
-const Graph = ({ papers }) => {
+const Graph = ({ papers, fetchCount }) => {
   const container = React.useRef(null);
   const network = React.useRef(null);
 
@@ -50,7 +50,7 @@ const Graph = ({ papers }) => {
     } else {
       console.log('Graph component did not receive an array of papers or the array was empty:', papers);
     }
-  }, [papers]); // Re-run effect if papers prop changes
+  }, [papers, fetchCount]); // Re-run effect if papers prop changes or fetchCount changes
 
   // Conditional rendering to display the graph only if papers data is available
   return (
