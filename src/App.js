@@ -10,6 +10,7 @@ import PaperDetail from './components/PaperDetail'; // Import the PaperDetail co
 function App() {
   const [papers, setPapers] = useState([]);
   const [similarPapers, setSimilarPapers] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   // Function to fetch papers from the backend server
   const fetchPapers = async () => {
@@ -22,8 +23,10 @@ function App() {
       setPapers(data);
       // Assuming the API or another function provides similar papers data
       setSimilarPapers(data.similarPapers); // Adjust as per actual data structure
+      setLoading(false); // Set loading to false after data is fetched
     } catch (error) {
       console.error("Could not fetch papers: ", error);
+      setLoading(false); // Set loading to false even if there is an error
     }
   };
 
@@ -63,7 +66,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/papers" element={<Papers papers={papers} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/graph" element={<Graph papers={papers} />} />
+          <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} />} /> {/* Conditional rendering based on loading state */}
           <Route path="/papers/:paperId" element={<PaperDetail paper={papers[0]} similarPapers={similarPapers} />} />
         </Routes>
       </BrowserRouter>
