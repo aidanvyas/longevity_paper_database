@@ -14,7 +14,7 @@ function App() {
   // Function to fetch papers from the backend server
   const fetchPapers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/fetch_papers'); // Corrected the fetch URL
+      const response = await fetch('https://longevity-research-website-bqrhp4y8.devinapps.com/fetch_papers'); // Updated the fetch URL to the exposed backend server
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
