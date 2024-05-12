@@ -7,7 +7,7 @@ const Graph = ({ papers }) => {
 
   React.useEffect(() => {
     console.log('Graph component papers prop at render:', papers); // Additional logging to check the papers prop at render time
-    if (container.current && !network.current && papers.length > 0) { // Ensure papers data is not empty
+    if (container.current && !network.current && Array.isArray(papers) && papers.length > 0) { // Ensure papers data is an array and not empty
       // Create an array with nodes
       const nodes = papers.map((paper, index) => ({
         id: index,
@@ -18,12 +18,14 @@ const Graph = ({ papers }) => {
       // Create an array with edges
       const edges = [];
       papers.forEach((paper, index) => {
-        paper.references.forEach((reference) => {
-          const targetIndex = papers.findIndex((p) => p.title === reference.title);
-          if (targetIndex !== -1) {
-            edges.push({ from: index, to: targetIndex });
-          }
-        });
+        if (paper.references && Array.isArray(paper.references)) { // Ensure references exist and is an array
+          paper.references.forEach((reference) => {
+            const targetIndex = papers.findIndex((p) => p.title === reference.title);
+            if (targetIndex !== -1) {
+              edges.push({ from: index, to: targetIndex });
+            }
+          });
+        }
       });
 
       // Provide the data in the vis format
@@ -40,12 +42,14 @@ const Graph = ({ papers }) => {
       console.log('Edges:', JSON.stringify(edges, null, 2));
       // Additional debugging: Log the papers prop to ensure it contains the correct reference data
       console.log('Papers prop:', JSON.stringify(papers, null, 2));
+    } else {
+      console.log('Graph component did not receive an array of papers or the array was empty:', papers);
     }
   }, [papers]); // Re-run effect if papers prop changes
 
   // Conditional rendering to display the graph only if papers data is available
   return (
-    papers.length > 0 ? (
+    Array.isArray(papers) && papers.length > 0 ? (
       <div ref={container} style={{ height: '500px' }} />
     ) : (
       <div>No data available for the graph.</div>
