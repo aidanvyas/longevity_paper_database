@@ -44,6 +44,11 @@ function App() {
   // Log the papers state before rendering the routes
   console.log('Papers state before rendering routes:', papers);
 
+  // Additional logging to track rendering of Graph component
+  useEffect(() => {
+    console.log('Graph component key prop:', papers.length);
+  }, [papers.length]);
+
   return (
     <ChakraProvider>
       <BrowserRouter>
