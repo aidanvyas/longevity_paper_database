@@ -75,7 +75,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/papers" element={<Papers papers={papers} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} />} /> {/* Conditional rendering based on loading state */}
+          <Route path="/graph" element={loading ? <div>Loading...</div> : <Graph papers={papers} key={papers.length} />} /> {/* Conditional rendering based on loading state, added key prop to Graph */}
           <Route path="/papers/:paperId" element={<PaperDetail paper={papers[0]} similarPapers={similarPapers} />} />
         </Routes>
       </BrowserRouter>
