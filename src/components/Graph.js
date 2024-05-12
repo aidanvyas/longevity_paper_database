@@ -39,12 +39,14 @@ const Graph = ({ papers }) => {
 
       // Initialize network!
       network.current = new Network(container.current, data, {});
+      console.log('Network instance created:', network.current); // Added for debugging
 
       // Debugging: Log the nodes and edges to the console
       console.log('Nodes:', JSON.stringify(nodes, null, 2));
       console.log('Edges:', JSON.stringify(edges, null, 2));
       // Additional debugging: Log the papers prop to ensure it contains the correct reference data
       console.log('Papers prop:', JSON.stringify(papers, null, 2));
+      console.log('Data object passed to Network:', JSON.stringify(data, null, 2)); // Added for debugging
     } else {
       console.log('Graph component did not receive an array of papers or the array was empty:', papers);
     }
