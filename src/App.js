@@ -41,6 +41,9 @@ function App() {
     console.log('Papers state after fetch:', papers);
   }, [papers]);
 
+  // Log the papers state before rendering the routes
+  console.log('Papers state before rendering routes:', papers);
+
   return (
     <ChakraProvider>
       <BrowserRouter>
