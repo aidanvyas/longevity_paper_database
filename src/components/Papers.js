@@ -8,7 +8,8 @@ const Papers = () => {
   // Function to fetch papers from the backend server
   const fetchPapers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/fetch_papers');
+      // Update the fetch URL to the exposed backend server
+      const response = await fetch('https://longevity-research-website-bqrhp4y8.devinapps.com/fetch_papers');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

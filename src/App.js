@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Heading, Flex, Link } from '@chakra-ui/react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ChakraProvider, Box, Heading, Flex } from '@chakra-ui/react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './components/Home'; // Import the Home component
 import Papers from './components/Papers'; // Import the Papers component
 import About from './components/About'; // Import the About component
@@ -44,16 +44,16 @@ function App() {
             </Box>
 
             <Flex alignItems={'center'}>
-              <Link px={2} to="/">
+              <Link px={2} mr={4} to="/">
                 Home
               </Link>
-              <Link px={2} to="/papers">
+              <Link px={2} mr={4} to="/papers">
                 Papers
               </Link>
-              <Link px={2} to="/about">
+              <Link px={2} mr={4} to="/about">
                 About
               </Link>
-              <Link px={2} to="/graph">
+              <Link px={2} mr={4} to="/graph">
                 Graph
               </Link>
             </Flex>

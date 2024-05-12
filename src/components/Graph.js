@@ -33,6 +33,10 @@ const Graph = ({ papers }) => {
 
       // Initialize network!
       network.current = new Network(container.current, data, {});
+
+      // Debugging: Log the nodes and edges to the console
+      console.log('Nodes:', JSON.stringify(nodes, null, 2));
+      console.log('Edges:', JSON.stringify(edges, null, 2));
     }
   }, [papers]); // Re-run effect if papers prop changes
 
