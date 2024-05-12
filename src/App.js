@@ -36,6 +36,11 @@ function App() {
     fetchPapers();
   }, []);
 
+  // Effect to log papers state after it's set
+  useEffect(() => {
+    console.log('Papers state after fetch:', papers);
+  }, [papers]);
+
   return (
     <ChakraProvider>
       <BrowserRouter>
