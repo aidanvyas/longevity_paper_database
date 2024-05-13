@@ -7,6 +7,9 @@ const Home = ({ randomPaper, closestMatches, loading, fetchRandomPaper }) => {
     return authors.map(author => `${author.given} ${author.family}`).join(', ');
   };
 
+  // Added logging to check props
+  console.log('Home component props:', { randomPaper, closestMatches, loading });
+
   return (
     <Box p={5}>
       <Heading as="h1" size="xl" textAlign="center" mb={5}>
