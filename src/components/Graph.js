@@ -1,6 +1,17 @@
 import React from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 
+// Simple hash function to create unique identifiers
+const hashString = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash.toString();
+};
+
 const Graph = ({ papers, fetchCount }) => {
   const container = React.useRef(null);
   const network = React.useRef(null);
@@ -9,25 +20,34 @@ const Graph = ({ papers, fetchCount }) => {
     console.log('Graph component papers prop at render:', papers); // Additional logging to check the papers prop at render time
     if (container.current && !network.current && Array.isArray(papers) && papers.length > 0) { // Ensure papers data is an array and not empty
       // Create an array with nodes
-      const nodes = papers.map((paper) => {
-        let id = paper.doi || `${paper.title}-${paper.authors.join(', ')}`; // Fallback to title-authors if DOI is missing
-        return {
-          id: id, // Use DOI or title-authors as a unique identifier for nodes
-          label: paper.title,
-          title: paper.authors.join(', '),
-        };
+      const nodes = [];
+      const nodeIds = new Set(); // To track unique node IDs
+
+      papers.forEach((paper) => {
+        let id = paper.doi || hashString(`${paper.title}-${paper.authors.join(', ')}`); // Fallback to hashed title-authors if DOI is missing
+        if (!nodeIds.has(id)) {
+          nodes.push({
+            id: id, // Use DOI or hashed title-authors as a unique identifier for nodes
+            label: paper.title,
+            title: paper.authors.join(', '),
+          });
+          nodeIds.add(id);
+        }
       });
 
       // Create an array with edges
       const edges = [];
+      const edgeIds = new Set(); // To track unique edge IDs
+
       papers.forEach((paper) => {
-        let paperId = paper.doi || `${paper.title}-${paper.authors.join(', ')}`;
+        let paperId = paper.doi || hashString(`${paper.title}-${paper.authors.join(', ')}`);
         if (paper.references && Array.isArray(paper.references)) { // Ensure references exist and is an array
           paper.references.forEach((reference) => {
-            let referenceId = reference.DOI || `${reference.title}-${reference.authors.join(', ')}`;
-            const targetNode = nodes.find((node) => node.id === referenceId);
-            if (targetNode) {
-              edges.push({ from: paperId, to: targetNode.id });
+            let referenceId = reference.DOI || hashString(`${reference.title}-${reference.authors.join(', ')}`);
+            const edgeId = hashString(`${paperId}-${referenceId}`);
+            if (referenceId && !edgeIds.has(edgeId)) {
+              edges.push({ from: paperId, to: referenceId });
+              edgeIds.add(edgeId);
             } else {
               console.warn(`Reference titled "${reference.title}" does not have a DOI and will not be included in the graph.`);
             }
