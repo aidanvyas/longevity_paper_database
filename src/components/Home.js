@@ -14,7 +14,7 @@ const Home = ({ randomPaper, closestMatches, loading, fetchRandomPaper }) => {
       </Heading>
       {loading ? (
         <Text fontSize="lg" textAlign="center">Loading...</Text>
-      ) : (
+      ) : randomPaper ? (
         <VStack spacing={8}>
           <Box p={5} shadow="md" borderWidth="1px">
             <Heading fontSize="xl">{randomPaper.title}</Heading>
@@ -38,6 +38,8 @@ const Home = ({ randomPaper, closestMatches, loading, fetchRandomPaper }) => {
             Find New Paper
           </Button>
         </VStack>
+      ) : (
+        <Text fontSize="lg" textAlign="center">No paper data available.</Text>
       )}
     </Box>
   );

@@ -28,7 +28,7 @@ function App() {
       setClosestMatches(data.closest_matches);
       setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
       setLoading(false); // Set loading to false after data is fetched
-      console.log('Loading state after fetching random paper:', loading); // Log the loading state
+      // Removed unnecessary console log
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setFetchError(`Could not fetch random paper: ${error.message}`);
