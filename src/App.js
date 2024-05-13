@@ -67,21 +67,20 @@ function App() {
   // Fetch a random paper and all papers on component mount
   useEffect(() => {
     console.log('Mounting App component, starting fetch operations');
-    fetchRandomPaper();
-    fetchAllPapers(); // Fetch all papers for the graph
-  }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
+    const fetchOperations = async () => {
+      await fetchRandomPaper();
+      await fetchAllPapers(); // Fetch all papers for the graph
+    };
 
-  // useEffect hook to update loading state based on fetch completion flags and errors
-  useEffect(() => {
-    console.log('Checking fetch completion flags and errors for loading state update');
-    if (hasFetchedRandomPaper && hasFetchedAllPapers && fetchError === '') {
-      console.log('Both fetches complete and no errors, setting loading to false');
-      setLoading(false); // Set loading to false when both fetches are complete and no errors
-    } else if (fetchError !== '') {
-      console.log(`Fetch error encountered: ${fetchError}, setting loading to false`);
+    fetchOperations().then(() => {
+      console.log('Both fetches complete, setting loading to false');
+      setLoading(false); // Set loading to false when both fetches are complete
+    }).catch((error) => {
+      console.error(`Error during fetch operations: ${error}`);
+      setFetchError(`Error during fetch operations: ${error.message}`);
       setLoading(false); // Also set loading to false if there is an error
-    }
-  }, [hasFetchedRandomPaper, hasFetchedAllPapers, fetchError]); // Update loading state when fetches are complete or there is an error
+    });
+  }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
 
   return (
     <ChakraProvider>
