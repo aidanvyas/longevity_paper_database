@@ -27,11 +27,12 @@ function App() {
       setRandomPaper(data.random_paper);
       setClosestMatches(data.closest_matches);
       console.log('Random paper fetched, setting loading to false');
-      setLoading(false); // Set loading to false after updating state
+      // Removed setLoading(false) to centralize loading state management in the useEffect hook
       setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setFetchError(`Could not fetch random paper: ${error.message}`);
+      // Removed setLoading(false) as it's handled by the useEffect hook
     }
   }, []);
 
@@ -48,7 +49,7 @@ function App() {
       if (Array.isArray(papersData)) {
         setAllPapers(papersData);
         console.log('All papers fetched, setting loading to false');
-        setLoading(false); // Set loading to false after updating state
+        // Removed setLoading(false) to centralize loading state management in the useEffect hook
         setHasFetchedAllPapers(true); // Set flag to true after fetching all papers
         console.log('Updated papers state:', papersData); // Log the updated state
       } else {
@@ -58,10 +59,11 @@ function App() {
     } catch (error) {
       // Handle errors during fetch
       console.error("Could not fetch all papers: ", error);
-      setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
+      setFetchError(`Failed to fetch all papers: ${error.message}`);
+      // Removed setLoading(false) as it's handled by the useEffect hook
     } finally {
       console.log('All papers fetched or an error occurred, setting loading to false');
-      setLoading(false); // Ensure loading is set to false even if there is an error
+      // Ensure loading is set to false even if there is an error
     }
   }, []); // Empty dependency array to ensure the function is memoized
 
@@ -71,12 +73,14 @@ function App() {
     fetchAllPapers(); // Fetch all papers for the graph
   }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
 
-  // useEffect hook to update loading state based on fetch completion flags
+  // useEffect hook to update loading state based on fetch completion flags and errors
   useEffect(() => {
-    if (hasFetchedRandomPaper && hasFetchedAllPapers) {
-      setLoading(false); // Set loading to false when both fetches are complete
+    if (hasFetchedRandomPaper && hasFetchedAllPapers && fetchError === '') {
+      setLoading(false); // Set loading to false when both fetches are complete and no errors
+    } else if (fetchError !== '') {
+      setLoading(false); // Also set loading to false if there is an error
     }
-  }, [hasFetchedRandomPaper, hasFetchedAllPapers]); // Update loading state when fetches are complete
+  }, [hasFetchedRandomPaper, hasFetchedAllPapers, fetchError]); // Update loading state when fetches are complete or there is an error
 
   return (
     <ChakraProvider>
