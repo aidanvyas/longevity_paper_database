@@ -61,23 +61,24 @@ function App() {
       console.error("Could not fetch all papers: ", error);
       setFetchError(`Failed to fetch all papers: ${error.message}`);
       // Removed setLoading(false) as it's handled by the useEffect hook
-    } finally {
-      console.log('All papers fetched or an error occurred, setting loading to false');
-      // Ensure loading is set to false even if there is an error
     }
   }, []); // Empty dependency array to ensure the function is memoized
 
   // Fetch a random paper and all papers on component mount
   useEffect(() => {
+    console.log('Mounting App component, starting fetch operations');
     fetchRandomPaper();
     fetchAllPapers(); // Fetch all papers for the graph
   }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
 
   // useEffect hook to update loading state based on fetch completion flags and errors
   useEffect(() => {
+    console.log('Checking fetch completion flags and errors for loading state update');
     if (hasFetchedRandomPaper && hasFetchedAllPapers && fetchError === '') {
+      console.log('Both fetches complete and no errors, setting loading to false');
       setLoading(false); // Set loading to false when both fetches are complete and no errors
     } else if (fetchError !== '') {
+      console.log(`Fetch error encountered: ${fetchError}, setting loading to false`);
       setLoading(false); // Also set loading to false if there is an error
     }
   }, [hasFetchedRandomPaper, hasFetchedAllPapers, fetchError]); // Update loading state when fetches are complete or there is an error
@@ -112,11 +113,11 @@ function App() {
             {fetchError}
           </Alert>
         )}
-        <Routes>
-          <Route path="/" element={<Home randomPaper={randomPaper} closestMatches={closestMatches} loading={loading} fetchRandomPaper={fetchRandomPaper} />} />
+        <Routes key={loading}>
+          <Route path="/" element={loading ? <Box>Loading...</Box> : <Home randomPaper={randomPaper} closestMatches={closestMatches} fetchRandomPaper={fetchRandomPaper} />} />
           <Route path="/about" element={<About />} />
-          <Route path="/graph" element={<Graph papers={allPapers} />} /> {/* Pass allPapers as prop to Graph */}
-          <Route path="/papers/:paperId" element={<PaperDetail />} /> {/* Placeholder for future paper detail functionality */}
+          <Route path="/graph" element={loading ? <Box>Loading...</Box> : <Graph papers={allPapers} />} />
+          <Route path="/papers/:paperId" element={<PaperDetail />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
