@@ -7,7 +7,7 @@ const Home = ({ randomPaper, closestMatches, loading, fetchRandomPaper }) => {
     return authors.map(author => `${author.given} ${author.family}`).join(', ');
   };
 
-  // Added logging to check props
+  // Added logging to check props and loading state on each render
   console.log('Home component props:', { randomPaper, closestMatches, loading });
 
   return (
