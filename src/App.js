@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Heading, Flex } from '@chakra-ui/react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ChakraProvider, Box, Heading, Flex, Alert, AlertIcon } from '@chakra-ui/react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './components/Home'; // Import the Home component
 import About from './components/About'; // Import the About component
@@ -11,12 +11,13 @@ function App() {
   const [closestMatches, setClosestMatches] = useState([]);
   const [allPapers, setAllPapers] = useState([]); // State to store all papers for the graph
   const [loading, setLoading] = useState(true); // Added loading state
+  const [fetchError, setFetchError] = useState(''); // State to store fetch errors
 
   // Function to fetch a random paper and its closest matches from the backend server
-  const fetchRandomPaper = async () => {
+  const fetchRandomPaper = useCallback(async () => {
     setLoading(true); // Set loading to true before fetching data
     try {
-      const response = await fetch('https://longevity-research-website-bqrhp4y8.devinapps.com/fetch_papers'); // Updated the fetch URL to the exposed backend server
+      const response = await fetch('https://longevity-research-website-lgahj0je.devinapps.com/fetch_papers'); // Updated the fetch URL to the exposed backend server
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -28,29 +29,48 @@ function App() {
       console.error("Could not fetch random paper: ", error);
       setLoading(false); // Set loading to false even if there is an error
     }
-  };
+  }, []);
 
-  // Function to fetch all papers for the graph visualization
-  const fetchAllPapers = async () => {
+  // Function to fetch all papers for the graph visualization with pagination
+  // Function to fetch all papers for the graph visualization with pagination
+  const fetchAllPapers = useCallback(async (currentCursor = '*') => {
+    let cursor = currentCursor;
     try {
-      const response = await fetch('https://longevity-research-website-bqrhp4y8.devinapps.com/fetch_all_papers'); // Endpoint to fetch all papers
-      console.log('Fetching all papers response:', response); // Log the response for debugging
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      while (cursor) {
+        const response = await fetch(`https://longevity-research-website-lgahj0je.devinapps.com/fetch_all_papers?cursor=${cursor}`);
+        console.log(`Fetched papers with cursor: ${cursor}`); // Log the cursor used for fetching
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const papersData = await response.json();
+        console.log('Fetched papers data:', papersData); // Log the fetched data
+        console.log('Type of papersData:', typeof papersData); // Log the type of papersData
+        if (papersData && typeof papersData === 'object' && Array.isArray(papersData.papers)) {
+          setAllPapers(prevPapers => {
+            const updatedPapers = [...prevPapers, ...papersData.papers];
+            console.log('Updated papers state:', updatedPapers); // Log the updated state
+            return updatedPapers;
+          });
+          cursor = papersData.nextCursor; // Update the cursor for the next batch
+          console.log(`Next cursor: ${cursor}`); // Log the next cursor
+        } else {
+          // Handle unexpected data structure
+          console.error("Received data is not in the expected format or is empty");
+          cursor = null; // Stop the fetching process
+        }
       }
-      const papersData = await response.json();
-      console.log('All papers data:', papersData); // Log the data for debugging
-      setAllPapers(papersData); // Update state with all papers
     } catch (error) {
+      // Handle errors during fetch
       console.error("Could not fetch all papers: ", error);
+      setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
     }
-  };
+  }, []); // Empty dependency array to ensure the function is memoized
 
   // Fetch a random paper and all papers on component mount
   useEffect(() => {
     fetchRandomPaper();
     fetchAllPapers(); // Fetch all papers for the graph
-  }, []);
+  }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
 
   return (
     <ChakraProvider>
@@ -76,6 +96,12 @@ function App() {
             </Flex>
           </Flex>
         </Box>
+        {fetchError && (
+          <Alert status="error">
+            <AlertIcon />
+            {fetchError}
+          </Alert>
+        )}
         <Routes>
           <Route path="/" element={<Home randomPaper={randomPaper} closestMatches={closestMatches} loading={loading} fetchRandomPaper={fetchRandomPaper} />} />
           <Route path="/about" element={<About />} />
