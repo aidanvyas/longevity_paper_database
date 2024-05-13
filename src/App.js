@@ -113,7 +113,7 @@ function App() {
             {fetchError}
           </Alert>
         )}
-        <Routes key={loading}>
+        <Routes>
           <Route path="/" element={loading ? <Box>Loading...</Box> : <Home randomPaper={randomPaper} closestMatches={closestMatches} fetchRandomPaper={fetchRandomPaper} />} />
           <Route path="/about" element={<About />} />
           <Route path="/graph" element={loading ? <Box>Loading...</Box> : <Graph papers={allPapers} />} />
