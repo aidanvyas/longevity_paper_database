@@ -9,23 +9,27 @@ const Graph = ({ papers, fetchCount }) => {
     console.log('Graph component papers prop at render:', papers); // Additional logging to check the papers prop at render time
     if (container.current && !network.current && Array.isArray(papers) && papers.length > 0) { // Ensure papers data is an array and not empty
       // Create an array with nodes
-      const nodes = papers.map((paper, index) => ({
-        id: index,
-        label: paper.title,
-        title: paper.authors.join(', '),
-      }));
+      const nodes = papers.map((paper) => {
+        let id = paper.doi || `${paper.title}-${paper.authors.join(', ')}`; // Fallback to title-authors if DOI is missing
+        return {
+          id: id, // Use DOI or title-authors as a unique identifier for nodes
+          label: paper.title,
+          title: paper.authors.join(', '),
+        };
+      });
 
       // Create an array with edges
       const edges = [];
-      papers.forEach((paper, index) => {
+      papers.forEach((paper) => {
+        let paperId = paper.doi || `${paper.title}-${paper.authors.join(', ')}`;
         if (paper.references && Array.isArray(paper.references)) { // Ensure references exist and is an array
           paper.references.forEach((reference) => {
-            const targetIndex = papers.findIndex((p) => p.title === reference.title);
-            if (targetIndex !== -1) {
-              edges.push({ from: index, to: targetIndex });
+            let referenceId = reference.DOI || `${reference.title}-${reference.authors.join(', ')}`;
+            const targetNode = nodes.find((node) => node.id === referenceId);
+            if (targetNode) {
+              edges.push({ from: paperId, to: targetNode.id });
             } else {
-              // Log for debugging: when a reference does not match any paper title
-              console.log(`Reference not found for title: ${reference.title}`);
+              console.warn(`Reference titled "${reference.title}" does not have a DOI and will not be included in the graph.`);
             }
           });
         }
