@@ -12,6 +12,8 @@ function App() {
   const [allPapers, setAllPapers] = useState([]); // State to store all papers for the graph
   const [loading, setLoading] = useState(true); // Added loading state
   const [fetchError, setFetchError] = useState(''); // State to store fetch errors
+  const [hasFetchedRandomPaper, setHasFetchedRandomPaper] = useState(false); // Flag to track if random paper has been fetched
+  const [hasFetchedAllPapers, setHasFetchedAllPapers] = useState(false); // Flag to track if all papers have been fetched
 
   // Function to fetch a random paper and its closest matches from the backend server
   const fetchRandomPaper = useCallback(async () => {
@@ -24,14 +26,15 @@ function App() {
       const data = await response.json();
       setRandomPaper(data.random_paper);
       setClosestMatches(data.closest_matches);
-      setLoading(false); // Set loading to false after data is fetched
+      setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
+      console.log('Loading state after fetching random paper:', loading); // Log the loading state
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setLoading(false); // Set loading to false even if there is an error
+      console.log('Loading state after fetching random paper:', loading); // Log the loading state
     }
   }, []);
 
-  // Function to fetch all papers for the graph visualization with pagination
   // Function to fetch all papers for the graph visualization with pagination
   const fetchAllPapers = useCallback(async () => {
     try {
@@ -44,6 +47,7 @@ function App() {
       console.log('Fetched papers data:', papersData); // Log the fetched data
       if (Array.isArray(papersData)) {
         setAllPapers(papersData);
+        setHasFetchedAllPapers(true); // Set flag to true after fetching all papers
         console.log('Updated papers state:', papersData); // Log the updated state
       } else {
         // Handle unexpected data structure
@@ -54,13 +58,17 @@ function App() {
       console.error("Could not fetch all papers: ", error);
       setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
     }
+    setLoading(false); // Set loading to false after data is fetched or in case of an error
   }, []); // Empty dependency array to ensure the function is memoized
 
   // Fetch a random paper and all papers on component mount
   useEffect(() => {
     fetchRandomPaper();
     fetchAllPapers(); // Fetch all papers for the graph
-  }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
+    if (hasFetchedRandomPaper && hasFetchedAllPapers) {
+      setLoading(false); // Set loading to false when both fetches are complete
+    }
+  }, [fetchRandomPaper, fetchAllPapers, hasFetchedRandomPaper, hasFetchedAllPapers]); // Re-fetch when these functions or flags change
 
   return (
     <ChakraProvider>
