@@ -33,31 +33,21 @@ function App() {
 
   // Function to fetch all papers for the graph visualization with pagination
   // Function to fetch all papers for the graph visualization with pagination
-  const fetchAllPapers = useCallback(async (currentCursor = '*') => {
-    let cursor = currentCursor;
+  const fetchAllPapers = useCallback(async () => {
     try {
-      while (cursor) {
-        const response = await fetch(`https://longevity-research-website-lgahj0je.devinapps.com/fetch_all_papers?cursor=${cursor}`);
-        console.log(`Fetched papers with cursor: ${cursor}`); // Log the cursor used for fetching
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const papersData = await response.json();
-        console.log('Fetched papers data:', papersData); // Log the fetched data
-        console.log('Type of papersData:', typeof papersData); // Log the type of papersData
-        if (papersData && typeof papersData === 'object' && Array.isArray(papersData.papers)) {
-          setAllPapers(prevPapers => {
-            const updatedPapers = [...prevPapers, ...papersData.papers];
-            console.log('Updated papers state:', updatedPapers); // Log the updated state
-            return updatedPapers;
-          });
-          cursor = papersData.nextCursor; // Update the cursor for the next batch
-          console.log(`Next cursor: ${cursor}`); // Log the next cursor
-        } else {
-          // Handle unexpected data structure
-          console.error("Received data is not in the expected format or is empty");
-          cursor = null; // Stop the fetching process
-        }
+      const response = await fetch('https://longevity-research-website-lgahj0je.devinapps.com/fetch_all_papers');
+      console.log('Fetched papers data:', response); // Log the response
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const papersData = await response.json();
+      console.log('Fetched papers data:', papersData); // Log the fetched data
+      if (Array.isArray(papersData)) {
+        setAllPapers(papersData);
+        console.log('Updated papers state:', papersData); // Log the updated state
+      } else {
+        // Handle unexpected data structure
+        console.error("Received data is not in the expected format or is empty");
       }
     } catch (error) {
       // Handle errors during fetch
