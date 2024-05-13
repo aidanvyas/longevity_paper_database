@@ -114,9 +114,21 @@ function App() {
           </Alert>
         )}
         <Routes>
-          <Route path="/" element={loading ? <Box>Loading...</Box> : <Home randomPaper={randomPaper} closestMatches={closestMatches} fetchRandomPaper={fetchRandomPaper} />} />
+          <Route path="/" element={
+            <>
+              {console.log('Home route rendering, loading state:', loading)}
+              {loading ? <Box>Loading...</Box> : <Home randomPaper={randomPaper} closestMatches={closestMatches} fetchRandomPaper={fetchRandomPaper} />}
+              {console.log('Home route rendered')}
+            </>
+          } />
           <Route path="/about" element={<About />} />
-          <Route path="/graph" element={loading ? <Box>Loading...</Box> : <Graph papers={allPapers} />} />
+          <Route path="/graph" element={
+            <>
+              {console.log('Graph route rendering, loading state:', loading)}
+              {loading ? <Box>Loading...</Box> : <Graph papers={allPapers} />}
+              {console.log('Graph route rendered')}
+            </>
+          } />
           <Route path="/papers/:paperId" element={<PaperDetail />} />
         </Routes>
       </BrowserRouter>
