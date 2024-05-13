@@ -26,8 +26,8 @@ function App() {
       const data = await response.json();
       setRandomPaper(data.random_paper);
       setClosestMatches(data.closest_matches);
+      setLoading(false); // Set loading to false after updating state
       setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
-      // Removed unnecessary console log
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setFetchError(`Could not fetch random paper: ${error.message}`);
@@ -46,6 +46,7 @@ function App() {
       console.log('Fetched papers data:', papersData); // Log the fetched data
       if (Array.isArray(papersData)) {
         setAllPapers(papersData);
+        setLoading(false); // Set loading to false after updating state
         setHasFetchedAllPapers(true); // Set flag to true after fetching all papers
         console.log('Updated papers state:', papersData); // Log the updated state
       } else {
@@ -56,6 +57,8 @@ function App() {
       // Handle errors during fetch
       console.error("Could not fetch all papers: ", error);
       setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
+    } finally {
+      setLoading(false); // Ensure loading is set to false even if there is an error
     }
   }, []); // Empty dependency array to ensure the function is memoized
 
