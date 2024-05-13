@@ -27,12 +27,10 @@ function App() {
       setRandomPaper(data.random_paper);
       setClosestMatches(data.closest_matches);
       setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
-      setLoading(false); // Set loading to false after data is fetched
       // Removed unnecessary console log
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setFetchError(`Could not fetch random paper: ${error.message}`);
-      setLoading(false); // Set loading to false even if there is an error
     }
   }, []);
 
@@ -59,7 +57,6 @@ function App() {
       console.error("Could not fetch all papers: ", error);
       setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
     }
-    setLoading(false); // Set loading to false after data is fetched or in case of an error
   }, []); // Empty dependency array to ensure the function is memoized
 
   // Fetch a random paper and all papers on component mount
@@ -68,6 +65,7 @@ function App() {
     fetchAllPapers(); // Fetch all papers for the graph
   }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
 
+  // useEffect hook to update loading state based on fetch completion flags
   useEffect(() => {
     if (hasFetchedRandomPaper && hasFetchedAllPapers) {
       setLoading(false); // Set loading to false when both fetches are complete
