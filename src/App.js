@@ -12,8 +12,7 @@ function App() {
   const [allPapers, setAllPapers] = useState([]); // State to store all papers for the graph
   const [loading, setLoading] = useState(true); // Added loading state
   const [fetchError, setFetchError] = useState(''); // State to store fetch errors
-  const [hasFetchedRandomPaper, setHasFetchedRandomPaper] = useState(false); // Flag to track if random paper has been fetched
-  const [hasFetchedAllPapers, setHasFetchedAllPapers] = useState(false); // Flag to track if all papers have been fetched
+  // Removed unused state variables hasFetchedRandomPaper and hasFetchedAllPapers
 
   // Function to fetch a random paper and its closest matches from the backend server
   const fetchRandomPaper = useCallback(async () => {
@@ -28,7 +27,6 @@ function App() {
       setClosestMatches(data.closest_matches);
       console.log('Random paper fetched, setting loading to false');
       // Removed setLoading(false) to centralize loading state management in the useEffect hook
-      setHasFetchedRandomPaper(true); // Set flag to true after fetching random paper
     } catch (error) {
       console.error("Could not fetch random paper: ", error);
       setFetchError(`Could not fetch random paper: ${error.message}`);
@@ -50,7 +48,6 @@ function App() {
         setAllPapers(papersData);
         console.log('All papers fetched, setting loading to false');
         // Removed setLoading(false) to centralize loading state management in the useEffect hook
-        setHasFetchedAllPapers(true); // Set flag to true after fetching all papers
         console.log('Updated papers state:', papersData); // Log the updated state
       } else {
         // Handle unexpected data structure
