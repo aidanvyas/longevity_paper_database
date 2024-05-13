@@ -33,7 +33,7 @@ function App() {
       setLoading(false); // Set loading to false even if there is an error
       console.log('Loading state after fetching random paper:', loading); // Log the loading state
     }
-  }, []);
+  }, [loading]);
 
   // Function to fetch all papers for the graph visualization with pagination
   const fetchAllPapers = useCallback(async () => {
@@ -59,16 +59,19 @@ function App() {
       setFetchError('Failed to fetch papers. Please try again later.'); // Set fetch error message
     }
     setLoading(false); // Set loading to false after data is fetched or in case of an error
-  }, []); // Empty dependency array to ensure the function is memoized
+  }, [loading]); // Empty dependency array to ensure the function is memoized
 
   // Fetch a random paper and all papers on component mount
   useEffect(() => {
     fetchRandomPaper();
     fetchAllPapers(); // Fetch all papers for the graph
+  }, [fetchRandomPaper, fetchAllPapers]); // Re-fetch when these functions change
+
+  useEffect(() => {
     if (hasFetchedRandomPaper && hasFetchedAllPapers) {
       setLoading(false); // Set loading to false when both fetches are complete
     }
-  }, [fetchRandomPaper, fetchAllPapers, hasFetchedRandomPaper, hasFetchedAllPapers]); // Re-fetch when these functions or flags change
+  }, [hasFetchedRandomPaper, hasFetchedAllPapers]); // Update loading state when fetches are complete
 
   return (
     <ChakraProvider>
